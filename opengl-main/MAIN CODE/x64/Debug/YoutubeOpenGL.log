@@ -1,0 +1,3 @@
+﻿  Main.cpp
+C:\Users\mt150\OneDrive\Pulpit\opengl-tutorials-main\YoutubeOpenGL 12 - Mesh Class\Main.cpp(95,43): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
+  YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\opengl-tutorials-main\YoutubeOpenGL 12 - Mesh Class\x64\Debug\YoutubeOpenGL.exe
