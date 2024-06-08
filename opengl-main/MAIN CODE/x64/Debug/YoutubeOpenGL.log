@@ -1,3 +1,1 @@
-﻿  Main.cpp
-C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Main.cpp(103,43): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
-  YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\YoutubeOpenGL.exe
+﻿  YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\YoutubeOpenGL.exe

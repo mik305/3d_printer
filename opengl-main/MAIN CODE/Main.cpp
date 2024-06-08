@@ -20,7 +20,7 @@ namespace fs = std::filesystem;
 std::queue<glm::vec3> gcodeTargets;
 glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
-const unsigned int width = 800;
+const unsigned int width = 1200;
 const unsigned int height = 800;
 
 Vertex vertices[] =
