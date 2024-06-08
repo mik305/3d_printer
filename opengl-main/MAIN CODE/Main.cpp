@@ -1,16 +1,24 @@
 #include <filesystem>
-namespace fs = std::filesystem;
-
+#include <queue>
+#include <sstream>
+#include <iostream>
+#include <vector>
+#include <algorithm>
 #include "Mesh.h"
 #include "shaderClass.h"
 #include "VAO.h"
 #include "VBO.h"
 #include "EBO.h"
 #include "Camera.h"
-
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+namespace fs = std::filesystem;
+
+// Global variable to store G-code target positions
+std::queue<glm::vec3> gcodeTargets;
+glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 
 const unsigned int width = 800;
 const unsigned int height = 800;
@@ -99,12 +107,57 @@ void drawCoordinateLines(Shader& shader, Camera& camera, float scale)
     glDeleteBuffers(1, &VBO);
 }
 
+// Function to execute G-code commands
+void executeGcode(const char* gcode, std::queue<glm::vec3>& targets, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
+{
+    std::istringstream stream(gcode);
+    std::string line;
+
+    while (std::getline(stream, line)) {
+        std::istringstream linestream(line);
+        std::string command;
+        linestream >> command;
+
+        if (command == "G0" || command == "G1") {
+            float x = targetPos.x;
+            float y = targetPos.y;
+            float z = targetPos.z;
+            char axis;
+            float value;
+
+            while (linestream >> axis >> value) {
+                if (axis == 'X') {
+                    x = value;
+                }
+                else if (axis == 'Y') {
+                    y = value;
+                }
+                else if (axis == 'Z') {
+                    z = value;
+                }
+            }
+
+            // Clamp values to within the allowed range
+            x = std::max(minX, std::min(maxX, x));
+            y = std::max(minY, std::min(maxY, y));
+            z = std::max(minZ, std::min(maxZ, z));
+
+            // Push the new target position to the queue
+            targets.push(glm::vec3(x, y, z));
+        }
+        // Handle other G-code commands as needed
+    }
+}
+
 int main()
 {
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // Buffer to hold the G-code input text
+    char gcodeInputText[1024] = "";
 
     GLFWwindow* window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
     if (window == NULL)
@@ -143,6 +196,7 @@ int main()
 
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f);
+    targetPos = lightPos;
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
 
@@ -168,6 +222,8 @@ int main()
     glm::vec3 lightVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
     float minX = -floorScale;
     float maxX = floorScale;
+    float minY = 0.0f;
+    float maxY = 2.0f;
     float minZ = -floorScale;
     float maxZ = floorScale;
 
@@ -184,8 +240,11 @@ int main()
     // Variable to hold the selected radio button index
     static int selected = 0;
 
-    // Buffer to hold the input text
-    char inputText[128] = "";
+    // Variable to store the control mode
+    static bool controlModeArrows = true;
+
+    // Interpolation speed
+    const float moveSpeed = 0.01f;  // Speed of light movement
 
     while (!glfwWindowShouldClose(window))
     {
@@ -202,21 +261,57 @@ int main()
         }
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-        lightVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && lightPos.z - 0.01f >= minZ) {
-            lightVelocity.z = -0.01f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && lightPos.z + 0.01f <= maxZ) {
-            lightVelocity.z = 0.01f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS && lightPos.x - 0.01f >= minX) {
-            lightVelocity.x = -0.01f;
-        }
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS && lightPos.x + 0.01f <= maxX) {
-            lightVelocity.x = 0.01f;
-        }
+        // Control light position via G-code
+        if (!controlModeArrows)
+        {
+            if (!gcodeTargets.empty())
+            {
+                glm::vec3 target = gcodeTargets.front();
+                glm::vec3 direction = target - lightPos;
+                float distance = glm::length(direction);
 
-        lightPos += lightVelocity;
+                if (distance > moveSpeed)
+                {
+                    direction = glm::normalize(direction);
+                    lightPos += direction * moveSpeed;
+                }
+                else
+                {
+                    lightPos = target;
+                    gcodeTargets.pop();
+                }
+
+                targetPos = lightPos;
+            }
+        }
+        else
+        {
+            // Arrow key control
+            lightVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
+            if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && lightPos.z - 0.01f >= minZ) {
+                lightVelocity.z = -0.01f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS && lightPos.z + 0.01f <= maxZ) {
+                lightVelocity.z = 0.01f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS && lightPos.x - 0.01f >= minX) {
+                lightVelocity.x = -0.01f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS && lightPos.x + 0.01f <= maxX) {
+                lightVelocity.x = 0.01f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_PAGE_UP) == GLFW_PRESS && lightPos.y + 0.01f <= maxY) {
+                lightVelocity.y = 0.01f;
+            }
+            if (glfwGetKey(window, GLFW_KEY_PAGE_DOWN) == GLFW_PRESS && lightPos.y - 0.01f >= minY) {
+                lightVelocity.y = -0.01f;
+            }
+
+            lightPos += lightVelocity;
+
+            // Reset target position after arrow key control
+            targetPos = lightPos;
+        }
 
         lightModel = glm::mat4(1.0f);
         lightModel = glm::translate(lightModel, lightPos);
@@ -239,11 +334,21 @@ int main()
         ImGui::NewFrame();
 
         // Create a simple window with radio buttons and an input box
-        ImGui::Begin("Hello, world!");
-        ImGui::Text("This is a simple text.");
-        ImGui::RadioButton("Option 1", &selected, 0);
-        ImGui::RadioButton("Option 2", &selected, 1);
-        ImGui::InputText("Input Text", inputText, IM_ARRAYSIZE(inputText));
+        ImGui::Begin("Control Panel");
+        ImGui::Text("Choose control mode:");
+        ImGui::RadioButton("Arrow Keys", &selected, 0);
+        ImGui::RadioButton("G-code", &selected, 1);
+
+        // Update control mode based on ImGui selection
+        controlModeArrows = (selected == 0);
+
+        if (!controlModeArrows) {
+            ImGui::InputTextMultiline("G-code Input", gcodeInputText, IM_ARRAYSIZE(gcodeInputText), ImVec2(-FLT_MIN, ImGui::GetTextLineHeight() * 16));
+            if (ImGui::Button("Execute")) {
+                executeGcode(gcodeInputText, gcodeTargets, minX, maxX, minY, maxY, minZ, maxZ);
+            }
+        }
+
         ImGui::End();
 
         // Rendering

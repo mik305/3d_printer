@@ -1,37 +1,3 @@
-﻿  Camera.cpp
-  EBO.cpp
-  imgui.cpp
-  imgui_demo.cpp
-  imgui_draw.cpp
-  imgui_impl_glfw.cpp
-  imgui_impl_opengl3.cpp
-  imgui_tables.cpp
-  imgui_widgets.cpp
-  Main.cpp
-C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Main.cpp(95,43): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
-  Mesh.cpp
-C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Mesh.cpp(56,65): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
-  shaderClass.cpp
-  stb.cpp
-  Texture.cpp
-  VAO.cpp
-C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\VAO.cpp(13,63): warning C4244: "argument": konwersja z "GLsizeiptr" do "GLsizei", możliwa utrata danych
-  VBO.cpp
-  Generowanie kodu...
-  glad.c
-glfw3.lib(input.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(input.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(init.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(init.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(window.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(window.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_window.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_window.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(context.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(context.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_joystick.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_joystick.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_time.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_time.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_init.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_init.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_monitor.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_monitor.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(win32_thread.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(win32_thread.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(monitor.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(monitor.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(vulkan.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(vulkan.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(wgl_context.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(wgl_context.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(egl_context.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(egl_context.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
-glfw3.lib(osmesa_context.obj) : warning LNK4099: nie znaleziono pliku PDB „glfw.pdb” z elementem „glfw3.lib(osmesa_context.obj)” lub w pozycji „C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\glfw.pdb”; obiekt zostanie skonsolidowany bez informacji debugowania
+﻿  Main.cpp
+C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Main.cpp(103,43): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
   YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\YoutubeOpenGL.exe
