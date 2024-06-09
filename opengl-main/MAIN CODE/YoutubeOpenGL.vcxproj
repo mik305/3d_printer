@@ -201,6 +201,10 @@
     <None Include="light.vert" />
     <None Include="line.frag" />
     <None Include="line.vert" />
+    <None Include="simple.frag" />
+    <None Include="simple.vert" />
+    <None Include="trace.frag" />
+    <None Include="trace.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

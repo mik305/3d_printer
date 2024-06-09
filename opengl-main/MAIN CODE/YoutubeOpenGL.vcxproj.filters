@@ -148,5 +148,9 @@
     <None Include="line.frag">
       <Filter>Resource Files\Shaders</Filter>
     </None>
+    <None Include="trace.vert" />
+    <None Include="trace.frag" />
+    <None Include="simple.vert" />
+    <None Include="simple.frag" />
   </ItemGroup>
 </Project>

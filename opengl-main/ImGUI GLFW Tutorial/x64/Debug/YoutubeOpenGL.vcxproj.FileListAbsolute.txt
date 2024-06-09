@@ -1,1 +1,0 @@
-C:\Users\mt150\OneDrive\Pulpit\opengl-tutorials-main\ImGUI GLFW Tutorial\x64\Debug\YoutubeOpenGL.exe

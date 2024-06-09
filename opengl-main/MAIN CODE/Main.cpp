@@ -19,6 +19,7 @@ namespace fs = std::filesystem;
 // Global variable to store G-code target positions
 std::queue<glm::vec3> gcodeTargets;
 glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
+std::vector<glm::vec3> pastPositions;
 
 const unsigned int width = 1200;
 const unsigned int height = 800;
@@ -107,6 +108,39 @@ void drawCoordinateLines(Shader& shader, Camera& camera, float scale)
     glDeleteBuffers(1, &VBO);
 }
 
+// Function to draw trace lines
+void drawTrace(Shader& shader, Camera& camera, const std::vector<glm::vec3>& positions)
+{
+    if (positions.size() < 2)
+        return;
+
+    // Create VAO, VBO for the trace lines
+    GLuint VAO, VBO;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+
+    glBindVertexArray(VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+
+    glBufferData(GL_ARRAY_BUFFER, positions.size() * sizeof(glm::vec3), &positions[0], GL_STATIC_DRAW);
+
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+
+    shader.Activate();
+    camera.Matrix(shader, "camMatrix");
+
+    glm::mat4 model = glm::mat4(1.0f);
+    glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(model));
+
+    glBindVertexArray(VAO);
+    glDrawArrays(GL_LINE_STRIP, 0, positions.size());
+
+    glBindVertexArray(0);
+    glDeleteVertexArrays(1, &VAO);
+    glDeleteBuffers(1, &VBO);
+}
+
 // Function to execute G-code commands
 void executeGcode(const char* gcode, std::queue<glm::vec3>& targets, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
@@ -184,12 +218,14 @@ int main()
     };
 
     Shader shaderProgram("default.vert", "default.frag");
+    Shader lightShader("light.vert", "light.frag");
+    Shader traceShader("trace.vert", "trace.frag");
+
     std::vector<Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
     std::vector<GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
     std::vector<Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
     Mesh floor(verts, ind, tex);
 
-    Shader lightShader("light.vert", "light.frag");
     std::vector<Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
     std::vector<GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
     Mesh light(lightVerts, lightInd, tex);
@@ -281,6 +317,9 @@ int main()
                     gcodeTargets.pop();
                 }
 
+                // Update past positions for the trace
+                pastPositions.push_back(lightPos);
+
                 targetPos = lightPos;
             }
         }
@@ -309,6 +348,11 @@ int main()
 
             lightPos += lightVelocity;
 
+            // Update past positions for the trace
+            if (lightVelocity != glm::vec3(0.0f, 0.0f, 0.0f)) {
+                pastPositions.push_back(lightPos);
+            }
+
             // Reset target position after arrow key control
             targetPos = lightPos;
         }
@@ -325,6 +369,9 @@ int main()
 
         // Draw coordinate lines
         drawCoordinateLines(shaderProgram, camera, floorScale);
+
+        // Draw trace
+        drawTrace(traceShader, camera, pastPositions);
 
         light.Draw(lightShader, camera);
 
@@ -366,6 +413,7 @@ int main()
 
     shaderProgram.Delete();
     lightShader.Delete();
+    traceShader.Delete();
     glfwDestroyWindow(window);
     glfwTerminate();
     return 0;
