@@ -16,8 +16,5 @@ ruch kamery po wciśnięciu alt: w, a, s, d, e, q, ctrl, spacja
 ruch ekstrudera: strzałki
 
 to do:
-- w oknie imgui wybór czy ruch ma być strzałkami czy z kodu gcode
-- opcja wklejania gcoda i drukarka reagująca na ten kod
-- poprawienie kształtu ekstrudera z kwadratu
-- zostawianie materiału za ekstruderem
+- zmiana sposobu generacji kształtów, zmiana shadera nie robić tego przez light.vert i light.frag tylko jakimś prostszym, potem zmiana logiki pod to w main.cpp - początek jest w simple.frag i simple.vert 
 - uprzątnięcie kodu, usunięcie pozostałości światła - nie potrzebne już
