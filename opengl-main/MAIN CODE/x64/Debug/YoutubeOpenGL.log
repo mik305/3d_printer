@@ -1,1 +1,4 @@
-﻿  YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\YoutubeOpenGL.exe
+﻿  Main.cpp
+C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Main.cpp(101,43): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
+C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\Main.cpp(134,52): warning C4267: "argument": konwersja z "size_t" do "GLsizei", możliwa utrata danych
+  YoutubeOpenGL.vcxproj -> C:\Users\mt150\OneDrive\Pulpit\3d_printer\opengl-main\MAIN CODE\x64\Debug\YoutubeOpenGL.exe
