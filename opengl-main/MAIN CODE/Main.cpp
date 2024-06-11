@@ -16,7 +16,7 @@
 
 namespace fs = std::filesystem;
 
-// Global variable to store G-code target positions
+//G-code positions
 std::queue<glm::vec3> gcodeTargets;
 glm::vec3 targetPos = glm::vec3(0.0f, 0.0f, 0.0f);
 std::vector<glm::vec3> pastPositions;
@@ -63,10 +63,8 @@ GLuint lightIndices[] =
     4, 6, 7
 };
 
-// Function to draw coordinate lines
 void drawCoordinateLines(Shader& shader, Camera& camera, float scale)
 {
-    // Create VAO, VBO for the lines
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -77,11 +75,11 @@ void drawCoordinateLines(Shader& shader, Camera& camera, float scale)
     std::vector<glm::vec3> lines;
     for (float i = -scale; i <= scale; i += 1.0f)
     {
-        // X-axis lines
+        // X lines
         lines.push_back(glm::vec3(i, 0.0f, -scale));
         lines.push_back(glm::vec3(i, 0.0f, scale));
 
-        // Z-axis lines
+        // Y lines
         lines.push_back(glm::vec3(-scale, 0.0f, i));
         lines.push_back(glm::vec3(scale, 0.0f, i));
     }
@@ -105,13 +103,12 @@ void drawCoordinateLines(Shader& shader, Camera& camera, float scale)
     glDeleteBuffers(1, &VBO);
 }
 
-// Function to draw trace lines
 void drawTrace(Shader& shader, Camera& camera, const std::vector<glm::vec3>& positions)
 {
     if (positions.size() < 2)
         return;
 
-    // Create VAO, VBO for the trace lines
+    //VAO, VBO for lines
     GLuint VAO, VBO;
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -138,7 +135,6 @@ void drawTrace(Shader& shader, Camera& camera, const std::vector<glm::vec3>& pos
     glDeleteBuffers(1, &VBO);
 }
 
-// Function to execute G-code commands
 void executeGcode(const char* gcode, std::queue<glm::vec3>& targets, float minX, float maxX, float minY, float maxY, float minZ, float maxZ)
 {
     std::istringstream stream(gcode);
@@ -168,15 +164,13 @@ void executeGcode(const char* gcode, std::queue<glm::vec3>& targets, float minX,
                 }
             }
 
-            // Clamp values to within the allowed range
             x = std::max(minX, std::min(maxX, x));
             y = std::max(minY, std::min(maxY, y));
             z = std::max(minZ, std::min(maxZ, z));
 
-            // Push the new target position to the queue
+            //new target position to the queue
             targets.push(glm::vec3(x, y, z));
         }
-        // Handle other G-code commands as needed
     }
 }
 
@@ -187,7 +181,6 @@ int main()
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    // Buffer to hold the G-code input text
     char gcodeInputText[1024] = "";
 
     GLFWwindow* window = glfwCreateWindow(width, height, "OpenGL", NULL, NULL);
@@ -206,7 +199,7 @@ int main()
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     std::string parentDir = (fs::current_path().fs::path::parent_path()).string();
-    std::string texPath = "/Resources/YoutubeOpenGL 10 - Specular Maps/";
+    std::string texPath = "/Resources/";
 
     Texture textures[] =
     {
@@ -260,7 +253,7 @@ int main()
     float minZ = -floorScale;
     float maxZ = floorScale;
 
-    // Setup ImGui context
+    //ImGui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -270,31 +263,27 @@ int main()
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init("#version 330");
 
-    // Variable to hold the selected radio button index
     static int selected = 0;
 
-    // Variable to store the control mode
     static bool controlModeArrows = true;
 
-    // Interpolation speed
-    const float moveSpeed = 0.01f;  // Speed of light movement
+    const float moveSpeed = 0.01f;  // Speed of cube movement
 
     while (!glfwWindowShouldClose(window))
     {
         glClearColor(0.07f, 0.13f, 0.17f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        // Check if the Alt key is pressed
+        // Alt key is pressed
         bool altPressed = glfwGetKey(window, GLFW_KEY_LEFT_ALT) == GLFW_PRESS || glfwGetKey(window, GLFW_KEY_RIGHT_ALT) == GLFW_PRESS;
 
-        // Only handle camera inputs if Alt is pressed
         if (altPressed)
         {
             camera.Inputs(window);
         }
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-        // Control light position via G-code
+        // cube position via G-code
         if (!controlModeArrows)
         {
             if (!gcodeTargets.empty())
@@ -314,7 +303,6 @@ int main()
                     gcodeTargets.pop();
                 }
 
-                // Update past positions for the trace
                 pastPositions.push_back(lightPos);
 
                 targetPos = lightPos;
@@ -322,7 +310,6 @@ int main()
         }
         else
         {
-            // Arrow key control
             lightVelocity = glm::vec3(0.0f, 0.0f, 0.0f);
             if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS && lightPos.z - 0.01f >= minZ) {
                 lightVelocity.z = -0.01f;
@@ -345,7 +332,7 @@ int main()
 
             lightPos += lightVelocity;
 
-            // Update past positions for the trace
+            // past positions for the trace
             if (lightVelocity != glm::vec3(0.0f, 0.0f, 0.0f)) {
                 pastPositions.push_back(lightPos);
             }
@@ -364,26 +351,21 @@ int main()
 
         floor.Draw(shaderProgram, camera);
 
-        // Draw coordinate lines
         drawCoordinateLines(shaderProgram, camera, floorScale);
 
-        // Draw trace
         drawTrace(traceShader, camera, pastPositions);
 
         light.Draw(lightShader, camera);
 
-        // Start the ImGui frame
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-        // Create a simple window with radio buttons and an input box
         ImGui::Begin("Control Panel");
         ImGui::Text("Choose control mode:");
         ImGui::RadioButton("Arrow Keys", &selected, 0);
         ImGui::RadioButton("G-code", &selected, 1);
 
-        // Update control mode based on ImGui selection
         controlModeArrows = (selected == 0);
 
         if (!controlModeArrows) {
@@ -395,7 +377,6 @@ int main()
 
         ImGui::End();
 
-        // Rendering
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
@@ -403,7 +384,6 @@ int main()
         glfwPollEvents();
     }
 
-    // Cleanup ImGui
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
